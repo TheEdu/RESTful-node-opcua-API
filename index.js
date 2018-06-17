@@ -113,19 +113,21 @@ function generateTree(session,nodeId,treeItemCallback){
 
 app.post('/tree', function (req, res) {
 
-	endpointUrl = req.body.endpointURL;
-	nodeId = req.body.nodeId;
+    endpointUrl = req.body.endpointURL;
+    nodeId = req.body.nodeId;
 
-	var options = {
+    var options = {
         connectionStrategy: {
             maxRetry: 5
         }
-     };
+    };
 
-	var client = new opcua.OPCUAClient(options);
-	var the_session;
 
-	async.series([
+
+    var client = new opcua.OPCUAClient(options);
+    var the_session;
+
+    async.series([
         // step 1 : connect to
         function(callback)  {
             console.log("step 1 : connect to");
@@ -145,8 +147,9 @@ app.post('/tree', function (req, res) {
             client.createSession( function(err,session) {
                 if(!err) {
                     the_session = session;
-                } else {
                     console.log("session created !");
+                } else {
+                    console.log(err);
                 }
                 callback(err);
             });
@@ -208,22 +211,37 @@ app.post('/status', function (req, res) {
      };
 
     var client = new opcua.OPCUAClient(options);
+    var the_session;
 
     async.series([
-        //step 1: Connect to the Server
+        // step 1: Connect to the Server
         function (callback) {
+            console.log("step 1: Connect to the Server");
             client.connect(endpointUrl, function (err) {
-                if (err) {
-                    console.log("cannot connect to endpoint :", endpointUrl);
-                } else {
-                    console.log("connected !");
-                }
                 callback(err);
             })
         },
 
-        // step 2 : Disconnect to the Server
+        // step 2 : createSession
+        function(callback) {
+            console.log("step 2 : createSession");
+            client.createSession( function(err,session) {
+                if(!err) the_session = session;
+                callback(err);
+            });
+        },
+
+        // step 3 : close session
+        function(callback) {
+            console.log("step 3 : close session");
+            the_session.close(function(err){
+                callback(err);
+            });
+        },
+
+        // step 4 : Disconnect to the Server
         function (callback) {
+            console.log("step 4 : Disconnect to the Server");
             client.disconnect(function (err) {
                 callback(err);
             });
