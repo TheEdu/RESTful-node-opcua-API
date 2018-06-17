@@ -59,7 +59,7 @@ function generateTree(session,nodeId,treeItemCallback){
             });
         },
 
- 		// step 2 : browse references
+        // step 2 : browse references
         function(callback) {
             //console.log("step 2 : browse references");
             session.browse(b, function (err, res) {
@@ -126,41 +126,41 @@ app.post('/tree', function (req, res) {
 	var the_session;
 
 	async.series([
-		// step 1 : connect to
-		function(callback)  {
+        // step 1 : connect to
+        function(callback)  {
             console.log("step 1 : connect to");
-		    client.connect(endpointUrl,function (err) {
-		        if(err) {
-		            console.log(" cannot connect to endpoint :" , endpointUrl );
-		        } else {
-		            console.log("connected !");
-		        }
-		        callback(err);
-		    });
-		},
+            client.connect(endpointUrl,function (err) {
+                if(err) {
+                    console.log(" cannot connect to endpoint :" , endpointUrl );
+                } else {
+                    console.log("connected !");
+                }
+                callback(err);
+            });
+        },
 
-		// step 2 : createSession
-		function(callback) {
+        // step 2 : createSession
+        function(callback) {
             console.log("step 2 : createSession");
-		    client.createSession( function(err,session) {
-		        if(!err) {
-		            the_session = session;
-		        } else {
-		            console.log("session created !");
-		        }
-		        callback(err);
-		    });
-		},
+            client.createSession( function(err,session) {
+                if(!err) {
+                    the_session = session;
+                } else {
+                    console.log("session created !");
+                }
+                callback(err);
+            });
+        },
 
-		// step 3 : generateTree
-		function(callback) {
+        // step 3 : generateTree
+        function(callback) {
             console.log("step 3 : generateTree");
-			generateTree(the_session,nodeId,function (err,result){
-				callback(err,result);
-		    });
-		},
+            generateTree(the_session,nodeId,function (err,result){
+                callback(err,result);
+            });
+        },
 
-		// step 4 : close session
+        // step 4 : close session
         function(callback) {
             console.log("step 4 : close session");
             the_session.close(function(err){
@@ -186,15 +186,15 @@ app.post('/tree', function (req, res) {
             });
         }
 
-	], function (err,result) {
-	        if(!err){
-	        	treeResultIndex = 2; // Result of step 3 : generateTree
-	            res.send(result[treeResultIndex]);
-	        }else{
-	            res.status(500).send(err);
-	        }
-		}
-	);
+        ], function (err,result) {
+            if(!err){
+                treeResultIndex = 2; // Result of step 3 : generateTree
+                res.send(result[treeResultIndex]);
+            }else{
+                res.status(500).send(err);
+            }
+        }
+    );
 });
 
 
@@ -221,6 +221,7 @@ app.post('/status', function (req, res) {
                 callback(err);
             })
         },
+
         // step 2 : Disconnect to the Server
         function (callback) {
             client.disconnect(function (err) {
