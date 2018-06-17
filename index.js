@@ -23,7 +23,7 @@ function TreeItem() {
 
 
 function generateTree(session,nodeId,treeItemCallback){
-
+    console.log("generateTree called");
     const b = [
             {
                 nodeId: nodeId,
@@ -47,6 +47,7 @@ function generateTree(session,nodeId,treeItemCallback){
     async.series([
     	// step 1 : complete attributes
         function(callback) {
+            //console.log("step 1 : complete attributes");
             session.readAllAttributes(nodeId, function (err, res) {
                 if(!err){
                     //console.log(res);
@@ -60,6 +61,7 @@ function generateTree(session,nodeId,treeItemCallback){
 
  		// step 2 : browse references
         function(callback) {
+            //console.log("step 2 : browse references");
             session.browse(b, function (err, res) {
                 //console.log(res);
 
@@ -69,23 +71,14 @@ function generateTree(session,nodeId,treeItemCallback){
                     for (let i = 0; i < browseResult.references.length; i++) {
                         const ref = browseResult.references[i];
                         children.push(ref.nodeId);
-                        // generateTree(ref.nodeId,function (err,res){
-                        //     if(!err) children.push(res);
-                        // });
                     }
 
                     browseResult = res[1];
                     for (let i = 0; i < browseResult.references.length; i++) {
                         const ref = browseResult.references[i];
                         children.push(ref.nodeId);
-                        // generateTree(ref.nodeId,function (err,res){
-                        //     if(!err) children.push(res);
-                        // });
                     }
-
-                    //treeItem.children = children;
                 }
-
                 callback(err);
             });
 
@@ -93,7 +86,7 @@ function generateTree(session,nodeId,treeItemCallback){
 
         // step 3 : push childs (recursivity)
         function(callback) {
-
+            //console.log("step 3 : push childs (recursivity)");
             if (treeItem.children == []){
                 callback();
             }else{
@@ -135,6 +128,7 @@ app.post('/tree', function (req, res) {
 	async.series([
 		// step 1 : connect to
 		function(callback)  {
+            console.log("step 1 : connect to");
 		    client.connect(endpointUrl,function (err) {
 		        if(err) {
 		            console.log(" cannot connect to endpoint :" , endpointUrl );
@@ -147,6 +141,7 @@ app.post('/tree', function (req, res) {
 
 		// step 2 : createSession
 		function(callback) {
+            console.log("step 2 : createSession");
 		    client.createSession( function(err,session) {
 		        if(!err) {
 		            the_session = session;
@@ -159,6 +154,7 @@ app.post('/tree', function (req, res) {
 
 		// step 3 : generateTree
 		function(callback) {
+            console.log("step 3 : generateTree");
 			generateTree(the_session,nodeId,function (err,result){
 				callback(err,result);
 		    });
@@ -166,6 +162,7 @@ app.post('/tree', function (req, res) {
 
 		// step 4 : close session
         function(callback) {
+            console.log("step 4 : close session");
             the_session.close(function(err){
                 if(err) {
                     console.log("session closed failed");
@@ -178,6 +175,7 @@ app.post('/tree', function (req, res) {
 
         // step 5 : client disconnected
         function(callback) {
+            console.log("step 5 : client disconnected");
             client.disconnect(function(err){
                 if(err) {
                     console.log("client disconnected failed");
